@@ -10,5 +10,3 @@ $wgExtensionCredits['DFWikiFunctions'][] = array(
 	'description' => 'Dwarf Fortress wiki modifications and extensions',
 	//'version'  => '1.0.5-dev',
 );
-
-
