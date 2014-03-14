@@ -37,6 +37,12 @@ function CVRedirect($title) {
 			return $new;
 		}
 	}
+	elseif ($title->mNamespace == NS_MAIN && $title->isRedirect()) {
+		// Handles mainspace redirects to mainspace pseudo-redirects
+		$content = WikiPage::factory($title)->getText();
+		$new = CVRedirect(Title::newFromRedirect($content));
+		if ($new) return $new;
+	}
 	return false;
 }
 $wgHooks['InitializeArticleMaybeRedirect'][] = function($title, $request, &$ignoreRedirect, &$target) {
