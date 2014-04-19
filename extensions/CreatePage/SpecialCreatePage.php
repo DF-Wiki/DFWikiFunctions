@@ -71,7 +71,20 @@ HTML;
             $this->confirm($output, $opts['page']);
             return false;
         }
+        $this->doCreate($page);
         $output->setPageTitle('Created page');
         $output->addHTML($this->msg('createpage-success')->params($page)->parse());
+    }
+    public function doCreate($pageTitle) {
+        $title = Title::newFromText($pageTitle);
+        $page = WikiPage::factory($title);
+        $user = User::newFromName($this->msg('createpage-user')->plain());
+        $page->doEdit(
+            $this->msg('createpage-newtext')->plain(),
+            'Creating page',
+            0, false,  // flags, baseRevId
+            $user
+        );
+        return true;
     }
 }

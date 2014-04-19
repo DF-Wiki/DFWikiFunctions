@@ -15,6 +15,8 @@ $messages[ 'en' ] = array(
     'createpage-exists' => '<p class="error">The page [[$1]] already exists!</p>',
     'createpage-success' => 'Created page [[$1]].',
     'createpage-unneeded' => 'You already have permission to create [[$1]].',
+    'createpage-newtext' => '<!-- created page -->',
+    'createpage-user' => 'Page creator',
 );
  
 /** Message documentation
@@ -28,4 +30,6 @@ $messages[ 'qqq' ] = array(
     'createpage-exists' => 'Error shown when a page attempting to be created already exists',
     'createpage-success' => 'Message shown after creating a page',
     'createpage-unneeded' => 'Message shown when user already has the ability to create pages',
+    'createpage-newtext' => 'Text to place on newly-created pages',
+    'createpage-user' => 'User to credit for new pages',
 );
