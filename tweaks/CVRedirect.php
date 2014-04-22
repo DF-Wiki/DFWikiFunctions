@@ -11,8 +11,8 @@ $wgExtensionCredits['AutoRedirect'][] = array(
 	'name' => 'AutoRedirect',
 	'author' =>'Lethosor',
 	'url' => 'https://github.com/lethosor/DFWikiFunctions',
-	'description' => 'Automatically redirects pages in the main namespace to versioned pages',
-	'version'  => '0.1',
+	'description' => 'Automatically redirects pages to more appropriate titles',
+	'version'  => '1.0',
 );
 
 $wgAutoRedirectNamespaces = array();
