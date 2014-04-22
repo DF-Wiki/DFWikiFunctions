@@ -42,22 +42,36 @@ class AutoRedirect {
 	static function toNamespace ($text) {
 		return Title::newFromText("$text:Dummy")->getNamespace();
 	}
-	static function findNextTitle ($title, $config) {
+	static function findNextTitle ($title, $config, $configNs=null) {
 		/**
 		 * Returns the next title that can be reached from $title, or
 		 * false if none can be found.
+		 *
+		 * $title: Title object
+		 * $config: configuration to use (e.g. AutoRedirect::getNsConfig())
+		 * $ns: If set, use as the key for $config instead of $title->getNamespace()
 		 */
 		global $wgAutoRedirectChecks;
 		array_unshift($wgAutoRedirectChecks, 'AutoRedirect::toString');
 		// Namespace ID and text of original title
 		$titleNs = $title->getNamespace();
 		$titleText = $title->getText();
-		if (array_key_exists($titleNs, $config)) {
-			foreach ($config[$titleNs] as $ns) {
+		if ($configNs === null) {
+			$configNs = $titleNs;
+		}
+		if (array_key_exists($configNs, $config)) {
+			foreach ($config[$configNs] as $ns) {
 				foreach ($wgAutoRedirectChecks as $func) {
 					$newText = call_user_func($func, $titleText);
 					$new = Title::makeTitleSafe($ns, $newText);
-					if ($new && $new->exists()) {
+					if (!$new) continue;
+					if ($new->isRedirect()) {
+						$content = WikiPage::factory($new)->getText();
+						$new = Title::newFromRedirect($content);
+						if ($new) return $new;
+						else return false;
+					}
+					if ($new->exists()) {
 						return $new;
 					}
 				}
@@ -69,11 +83,12 @@ class AutoRedirect {
 		/**
 		 * Calls findNextTitle with $title until it returns false
 		 */
+		$originalNs = $title->getNamespace();
 		$config = self::getNsConfig();
 		$new = $title;
 		while ($new && $limit-- > 0) {
 			$title = $new;
-			$new = self::findNextTitle($title, $config);
+			$new = self::findNextTitle($title, $config, $originalNs);
 		}
 		return $title;
 	}
@@ -86,7 +101,7 @@ class AutoRedirect {
 			$title = Title::newFromText($title);
 		}
 		global $wgMaxRedirects;
-		$limit = min(2, $wgMaxRedirects);
+		$limit = max(2, $wgMaxRedirects);
 		$new = self::findDestinationTitle($title, $limit);
 		if ($new->getFullText() == $title->getFullText()) return false;
 		else return $new;
