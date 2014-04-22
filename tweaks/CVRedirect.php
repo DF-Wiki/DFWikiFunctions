@@ -1,14 +1,14 @@
 <?php
 
 /**
- * CVRedirect
- * Treats nonexistent mainspace pages as redirects to the cv: page with the
- * same name if it exists.
+ * AutoRedirect: Automatically redirects to pages.
+ * Supports redirecting to pages in different namespaces and/or altering titles
+ * (e.g. changing to lowercase automatically)
  */
 
-$wgExtensionCredits['CVRedirect'][] = array(
+$wgExtensionCredits['AutoRedirect'][] = array(
 	'path' => __FILE__,
-	'name' => 'CVRedirect',
+	'name' => 'AutoRedirect',
 	'author' =>'Lethosor',
 	'url' => 'https://github.com/lethosor/DFWikiFunctions',
 	'description' => 'Automatically redirects pages in the main namespace to versioned pages',
@@ -18,7 +18,7 @@ $wgExtensionCredits['CVRedirect'][] = array(
 $wgAutoRedirectNamespaces = array();
 $wgAutoRedirectChecks = array();
 
-class CVRedirect {
+class AutoRedirect {
 	private static $NsConfig = null;
 	static function toString ($s) {
 		return (string) $s;
@@ -48,7 +48,7 @@ class CVRedirect {
 		 * false if none can be found.
 		 */
 		global $wgAutoRedirectChecks;
-		array_unshift($wgAutoRedirectChecks, 'CVRedirect::toString');
+		array_unshift($wgAutoRedirectChecks, 'AutoRedirect::toString');
 		// Namespace ID and text of original title
 		$titleNs = $title->getNamespace();
 		$titleText = $title->getText();
@@ -56,13 +56,10 @@ class CVRedirect {
 			foreach ($config[$titleNs] as $ns) {
 				foreach ($wgAutoRedirectChecks as $func) {
 					$newText = call_user_func($func, $titleText);
-					$new = Title::makeTitle($ns, $newText);
-					var_dump(array($func, $ns, $newText));
-					if ($new->exists()) {
-						var_dump(true);
+					$new = Title::makeTitleSafe($ns, $newText);
+					if ($new && $new->exists()) {
 						return $new;
 					}
-					var_dump(false);
 				}
 			}
 		}
@@ -85,49 +82,20 @@ class CVRedirect {
 		 * Takes a Title and returns a new Title to redirect to, or false if
 		 * the current title is acceptable.
 		 */
+		if (!($title instanceof Title)) {
+			$title = Title::newFromText($title);
+		}
 		global $wgMaxRedirects;
 		$limit = min(2, $wgMaxRedirects);
 		$new = self::findDestinationTitle($title, $limit);
 		if ($new->getFullText() == $title->getFullText()) return false;
 		else return $new;
 	}
-	static function oldredirect ($title, $limit=null) {
-		if ($limit === null) {
-			global $wgMaxRedirects;
-			// 2 redirects are required for this to be useful on the DF wiki;
-			// Require at least 2 to be followed, but limit to $wgMaxRedirects
-			$limit = min(2, $wgMaxRedirects);
-		}
-		if ($limit < 0) {
-			// Prevent infinite recursion
-			return $title;
-		}
-		if ($title->mNamespace == NS_MAIN && !$title->exists()) {
-			global $wgNamespaceAliases;
-			$new = Title::makeTitle($wgNamespaceAliases['CV'], $title->getFullText());
-			if ($new->exists()) {
-				while ($new->isRedirect()) {
-					$limit--;
-					if ($limit < 0) break;
-					$content = WikiPage::factory($new)->getText();
-					$new = Title::newFromRedirect($content);
-				}
-				return $new;
-			}
-		}
-		elseif ($title->mNamespace == NS_MAIN && $title->isRedirect()) {
-			// Handles mainspace redirects to mainspace pseudo-redirects
-			$content = WikiPage::factory($title)->getText();
-			$new = CVRedirect(Title::newFromRedirect($content), $limit-1);
-			if ($new) return $new;
-		}
-		return false;
-	}
 }
 
 $wgHooks['InitializeArticleMaybeRedirect'][] = function($title, $request, &$ignoreRedirect, &$target) {
 	// Handles redirects
-	$new = CVRedirect::redirect($title);
+	$new = AutoRedirect::redirect($title);
 	if ($new) {
 		$target = $new;
 		$ignoreRedirect = false;
@@ -136,7 +104,7 @@ $wgHooks['InitializeArticleMaybeRedirect'][] = function($title, $request, &$igno
 };
 $wgHooks['BeforeParserFetchTemplateAndtitle'][] = function($parser, $title, &$skip, &$id) {
 	// Handles transclusions
-	$new = CVRedirect::redirect($title);
+	$new = AutoRedirect::redirect($title);
 	if ($new) {
 		$id = $new->getLatestRevID();
 		$ignoreRedirect = false;
@@ -145,7 +113,7 @@ $wgHooks['BeforeParserFetchTemplateAndtitle'][] = function($parser, $title, &$sk
 };
 $wgHooks['TitleIsAlwaysKnown'][] = function($title, &$result) {
 	// Handles links (prevents them from appearing as redlinks when they actually work)
-	$new = CVRedirect::redirect($title);
+	$new = AutoRedirect::redirect($title);
 	if ($new) {
 		$result = true;
 	}
