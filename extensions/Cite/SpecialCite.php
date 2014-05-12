@@ -22,8 +22,9 @@ $wgExtensionCredits['specialpage'][] = array(
 	'url' => 'https://www.mediawiki.org/wiki/Extension:Cite/Special:Cite.php'
 );
 
-$dir = dirname( __FILE__ ) . '/';
+$dir = __DIR__ . '/';
 # Internationalisation file
+$wgMessagesDirs['SpecialCite'] = __DIR__ . '/i18n/special';
 $wgExtensionMessagesFiles['SpecialCite'] = $dir . 'SpecialCite.i18n.php';
 $wgExtensionMessagesFiles['SpecialCiteAliases'] = $dir . 'SpecialCite.alias.php';
 
@@ -35,12 +36,12 @@ $wgAutoloadClasses['SpecialCite'] = $dir . 'SpecialCite_body.php';
 
 // Resources
 $citeResourceTemplate = array(
-	'localBasePath' => dirname(__FILE__) . '/modules',
+	'localBasePath' => __DIR__ . '/modules',
 	'remoteExtPath' => 'Cite/modules'
 );
 
 $wgResourceModules['ext.specialcite'] = $citeResourceTemplate + array(
-	'styles' => 'ext.specialcite/ext.specialcite.css',
+	'styles' => 'ext.specialcite.css',
 	'scripts' => array(),
 	'position' => 'bottom',
 );
