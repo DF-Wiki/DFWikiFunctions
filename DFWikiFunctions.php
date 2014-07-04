@@ -1,9 +1,5 @@
 <?php
 
-if (!defined('TESTWIKI')) {
-	#require_once 'extensions/DFDiagram/DFDiagram.php';
-	require_once 'extensions/AccountCaptcha/AccountCaptcha.php';
-}
 global $wgWikiEditorFeatures;
 if (!isset($wgWikiEditorFeatures)) {
 	require_once 'extensions/WikiEditor/WikiEditor.php';
