@@ -13,11 +13,15 @@ $DFReleases = array(
     2 => 106,
     3 => 112,
     4 => 114,
+    5 => 116,
 );
+$DFReleaseAliases = array('Rel', 'V', 'R');
 
 foreach ($DFReleases as $id => $ns) {
-    $wgNamespaceAliases['Rel' . $id] = $wgNamespaceAliases['V' . $id] = $ns;
-    $wgNamespaceAliases['Rel' . $id . '_talk'] = $wgNamespaceAliases['V' . $id . '_talk'] = $ns;
+    foreach ($DFReleaseAliases as $a) {
+        $wgNamespaceAliases[$a . $id] = $ns;
+        $wgNamespaceAliases[$a . $id . '_talk'] = $ns + 1;
+    }
 }
 
 $wgAutoRedirectNamespaces = array(
