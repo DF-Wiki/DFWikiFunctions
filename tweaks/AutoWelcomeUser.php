@@ -27,11 +27,7 @@ class AutoWelcomeUserHooks {
             0, false,  // flags, baseRevId
             $author
         );
-    }
-    public static function UserGetReservedNames (&$reserved) {
-        global $wgAutoWelcomeUserAuthor;
-        $reserved[] = $wgAutoWelcomeUserAuthor;
+        return true;
     }
 }
 $wgHooks['AddNewAccount'][] = 'AutoWelcomeUserHooks::AddNewAccount';
-$wgHooks['UserGetReservedNames'][] = 'AutoWelcomeUserHooks::UserGetReservedNames';
