@@ -32,5 +32,5 @@ $wgAutoRedirectChecks = array(
 );
 
 
-$wgAutoWelcomeUserText = '{{welcome user}}';
+$wgAutoWelcomeUserText = '{{subst:welcome user}}';
 $wgAutoWelcomeUserAuthor = 'LethosorBot';
