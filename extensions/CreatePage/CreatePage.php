@@ -1,7 +1,5 @@
 <?php
 
-require_once(__DIR__ . '/CreatePage.body.php');
-
 $wgExtensionCredits['specialpage'][] = array(
     'path' => __FILE__,
     'name' => 'CreatePage',
