@@ -31,3 +31,6 @@ $wgAutoRedirectChecks = array(
     'mb_strtolower',
 );
 
+
+$wgAutoWelcomeUserText = '{{welcome user}}';
+$wgAutoWelcomeUserAuthor = 'LethosorBot';
