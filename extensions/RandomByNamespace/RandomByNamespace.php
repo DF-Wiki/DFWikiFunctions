@@ -5,7 +5,7 @@ $wgExtensionCredits['specialpage'][] = array(
     'name' => 'RandomByNamespace',
     'author' => 'Lethosor',
     'url' => 'https://github.com/lethosor/DFWikiFunctions',
-    'descriptionmsg' => 'random-by-namespace-desc',
+    'descriptionmsg' => 'randombynamespace-desc',
     'version' => '0.3',
 );
 
