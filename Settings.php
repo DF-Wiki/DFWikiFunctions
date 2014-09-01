@@ -1,4 +1,15 @@
 <?php
+/*
+ * Global settings
+ */
+
+// See https://www.mediawiki.org/wiki/Manual:$wgUrlProtocols
+$wgUrlProtocols[] = 'magnet:';
+
+/*
+ * Namespace aliases
+ */
+
 $wgNamespaceAliases['MDF'] = 1000;
 $wgNamespaceAliases['MDF_TALK'] = 1001;
 
@@ -23,6 +34,10 @@ foreach ($DFReleases as $id => $ns) {
         $wgNamespaceAliases[$a . $id . '_talk'] = $ns + 1;
     }
 }
+
+/*
+ * Extension settings
+ */
 
 $wgAutoRedirectNamespaces = array(
     '' => array('DF2014', 'v0.34', 'v0.31', '40d', '23a'),
