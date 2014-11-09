@@ -11,6 +11,7 @@ require_once 'extensions/CreatePage/CreatePage.php';
 require_once 'extensions/RandomByNamespace/RandomByNamespace.php';
 require_once 'tweaks/AutoRedirect.php';
 require_once 'tweaks/AutoWelcomeUser.php';
+require_once 'tweaks/CodeMarkup.php';
 
 require_once 'Settings.php';
 
