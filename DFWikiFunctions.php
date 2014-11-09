@@ -1,5 +1,6 @@
 <?php
 
+/*
 global $wgWikiEditorFeatures;
 if (!isset($wgWikiEditorFeatures)) {
 	require_once 'extensions/WikiEditor/WikiEditor.php';
@@ -7,6 +8,7 @@ if (!isset($wgWikiEditorFeatures)) {
 	$wgDefaultUserOptions['usebetatoolbar'] = 1;
 	$wgDefaultUserOptions['usebetatoolbar-cgd'] = 1;
 }
+*/
 require_once 'extensions/CreatePage/CreatePage.php';
 require_once 'extensions/RandomByNamespace/RandomByNamespace.php';
 require_once 'tweaks/AutoRedirect.php';
