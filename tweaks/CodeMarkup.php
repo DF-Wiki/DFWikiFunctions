@@ -4,7 +4,7 @@
  * CodeMarkup: Adds Markdown-like `code` syntax
  */
 
-$wgExtensionCredits['AutoWelcomeUser'][] = array(
+$wgExtensionCredits['CodeMarkup'][] = array(
     'path' => __FILE__,
     'name' => 'CodeMarkup',
     'author' =>'Lethosor',
