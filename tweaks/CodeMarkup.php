@@ -15,7 +15,7 @@ $wgExtensionCredits['CodeMarkup'][] = array(
 
 class CodeMarkup {
     public static function doBackticks ($text) {
-        $arr = preg_split('/(\`)/', $text, -1, PREG_SPLIT_DELIM_CAPTURE);
+        $arr = preg_split('/(\`\`)/', $text, -1, PREG_SPLIT_DELIM_CAPTURE);
         if (count($arr) <= 1) {
             return $text;
         }
