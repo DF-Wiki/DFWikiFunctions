@@ -111,6 +111,37 @@ class AutoRedirect {
 		if ($new->getFullText() == $title->getFullText()) return false;
 		else return $new;
 	}
+	static function PrefixSearchBackend ($namespaces, $search, $limit, &$results) {
+		// Based on PrefixSearch::defaultSearchBackend
+		global $wgAutoRedirectNamespaces;
+		if ($namespaces[0] == NS_MAIN) {
+			$namespaces = $wgAutoRedirectNamespaces[''];
+		}
+		//$srchres[] = 'list='.implode(",", $namespaces);
+		foreach ($namespaces as $ns) {
+			if (count($srchres) > $limit + 10)
+				break;
+			$ns = self::toNamespace($ns);
+			$req = new FauxRequest( array(
+				'action' => 'query',
+				'list' => 'allpages',
+				'apnamespace' => $ns,
+				'aplimit' => $limit,
+				'apprefix' => $search
+			));
+			// Execute
+			$module = new ApiMain($req);
+			$module->execute();
+			$data = $module->getResultData();
+			foreach ((array)$data['query']['allpages'] as $pageinfo) {
+				// Note: this data will no be printable by the xml engine
+				// because it does not support lists of unnamed items
+				$srchres[] = $pageinfo['title'];
+			}
+		}
+		$results = $srchres;
+		return false;
+	}
 }
 
 $wgHooks['InitializeArticleMaybeRedirect'][] = function($title, $request, &$ignoreRedirect, &$target) {
@@ -139,3 +170,5 @@ $wgHooks['TitleIsAlwaysKnown'][] = function($title, &$result) {
 	}
 	return true;
 };
+
+$wgHooks['PrefixSearchBackend'][] = 'AutoRedirect::PrefixSearchBackend';
