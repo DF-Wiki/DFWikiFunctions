@@ -119,7 +119,7 @@ class AutoRedirect {
 		}
 		//$srchres[] = 'list='.implode(",", $namespaces);
 		foreach ($namespaces as $ns) {
-			if (count($srchres) > $limit + 10)
+			if (count($srchres) > $limit)
 				break;
 			$ns = self::toNamespace($ns);
 			$req = new FauxRequest( array(
