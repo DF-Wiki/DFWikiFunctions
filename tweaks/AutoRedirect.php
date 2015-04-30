@@ -158,7 +158,6 @@ $wgHooks['BeforeParserFetchTemplateAndtitle'][] = function($parser, $title, &$sk
 	$new = AutoRedirect::redirect($title);
 	if ($new) {
 		$id = $new->getLatestRevID();
-		$ignoreRedirect = false;
 	}
 	return true;
 };
