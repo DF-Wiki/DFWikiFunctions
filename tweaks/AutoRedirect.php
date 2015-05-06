@@ -12,7 +12,7 @@ $wgExtensionCredits['AutoRedirect'][] = array(
 	'author' =>'Lethosor',
 	'url' => 'https://github.com/lethosor/DFWikiFunctions',
 	'description' => 'Automatically redirects pages to more appropriate titles',
-	'version'  => '1.0.2',
+	'version'  => '1.0.3',
 );
 
 $wgAutoRedirectNamespaces = array();
@@ -119,7 +119,7 @@ class AutoRedirect {
 		}
 		$srchres = array();
 		foreach ($namespaces as $ns) {
-			if (count($srchres) > $limit + 10)
+			if (count($srchres) > $limit)
 				break;
 			$ns = self::toNamespace($ns);
 			$req = new FauxRequest( array(
@@ -158,7 +158,6 @@ $wgHooks['BeforeParserFetchTemplateAndtitle'][] = function($parser, $title, &$sk
 	$new = AutoRedirect::redirect($title);
 	if ($new) {
 		$id = $new->getLatestRevID();
-		$ignoreRedirect = false;
 	}
 	return true;
 };
