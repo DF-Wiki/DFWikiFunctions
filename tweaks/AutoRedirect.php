@@ -117,7 +117,7 @@ class AutoRedirect {
 		if ($namespaces[0] == NS_MAIN) {
 			$namespaces = $wgAutoRedirectNamespaces[''];
 		}
-		//$srchres[] = 'list='.implode(",", $namespaces);
+		$srchres = array();
 		foreach ($namespaces as $ns) {
 			if (count($srchres) > $limit + 10)
 				break;
@@ -134,7 +134,7 @@ class AutoRedirect {
 			$module->execute();
 			$data = $module->getResultData();
 			foreach ((array)$data['query']['allpages'] as $pageinfo) {
-				// Note: this data will no be printable by the xml engine
+				// Note: this data will not be printable by the xml engine
 				// because it does not support lists of unnamed items
 				$srchres[] = $pageinfo['title'];
 			}
