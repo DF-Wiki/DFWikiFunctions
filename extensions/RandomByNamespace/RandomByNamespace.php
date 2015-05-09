@@ -13,3 +13,11 @@ $wgExtensionMessagesFiles['RandomByNamespace'] = __DIR__ . '/RandomByNamespace.i
 $wgExtensionMessagesFiles['RandomByNamespaceAlias'] = __DIR__ . '/RandomByNamespace.alias.php';
 $wgAutoloadClasses['SpecialRandomByNamespace'] = __DIR__ . '/SpecialRandomByNamespace.php';
 $wgSpecialPages['RandomByNamespace'] = 'SpecialRandomByNamespace';
+
+$wgResourceModules['ext.RandomByNamespace'] = array(
+    'scripts' => array(
+        'js/randombynamespace.js'
+    ),
+    'localBasePath' => __DIR__,
+    //'remoteExtPath' => 'DFWikiFunctions/extensions/RandomByNamespace',
+);
