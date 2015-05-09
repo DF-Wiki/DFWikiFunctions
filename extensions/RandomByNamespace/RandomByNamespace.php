@@ -6,7 +6,7 @@ $wgExtensionCredits['specialpage'][] = array(
     'author' => 'Lethosor',
     'url' => 'https://github.com/lethosor/DFWikiFunctions',
     'descriptionmsg' => 'randombynamespace-desc',
-    'version' => '0.3',
+    'version' => '0.4',
 );
 
 $wgExtensionMessagesFiles['RandomByNamespace'] = __DIR__ . '/RandomByNamespace.i18n.php';
