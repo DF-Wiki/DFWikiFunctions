@@ -9,5 +9,6 @@ jQuery(function($){
     };
     $('#randombynamespace-toggle-ids').change(function(){
         toggle($(this).prop('checked'));
-    })
+    });
+    toggle($('#randombynamespace-toggle-ids').prop('checked'));
 });
