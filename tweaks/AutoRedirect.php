@@ -12,7 +12,7 @@ $wgExtensionCredits['AutoRedirect'][] = array(
     'author' =>'Lethosor',
     'url' => 'https://github.com/lethosor/DFWikiFunctions',
     'description' => 'Automatically redirects pages to more appropriate titles',
-    'version'  => '1.0.5',
+    'version'  => '1.0.6',
 );
 
 $wgAutoRedirectNamespaces = array();
@@ -118,6 +118,7 @@ class AutoRedirect {
         global $wgAutoRedirectNamespaces;
         if ($namespaces[0] == NS_MAIN) {
             $namespaces = $wgAutoRedirectNamespaces[''];
+            array_unshift($namespaces, NS_MAIN);
         }
         $srchres = array();
         foreach ($namespaces as $ns) {
