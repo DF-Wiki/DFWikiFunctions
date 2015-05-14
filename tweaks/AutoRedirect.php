@@ -39,8 +39,10 @@ class AutoRedirect {
         }
         return self::$NsConfig;
     }
-    static function toNamespace ($text) {
-        return Title::newFromText("$text:Dummy")->getNamespace();
+    static function toNamespace ($ns) {
+        if (is_int($ns))
+            return $ns;
+        return Title::newFromText("$ns:Dummy")->getNamespace();
     }
     static function findNextTitle ($title, $config, $configNs=null) {
         /**
