@@ -15,8 +15,6 @@ require_once 'tweaks/AutoRedirect.php';
 require_once 'tweaks/AutoWelcomeUser.php';
 require_once 'tweaks/CodeMarkup.php';
 
-require_once 'Settings.php';
-
 $wgExtensionCredits['DFWikiFunctions'][] = array(
 	'path' => __FILE__,
 	'name' => 'DFWikiFunctions',
