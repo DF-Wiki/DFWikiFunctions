@@ -25,6 +25,8 @@ class AutoWelcomeUserHooks {
             return true;
         }
         $page = WikiPage::factory($user->getTalkPage());
+        if ($page->exists())
+            return true;
         $author = User::newFromName($wgAutoWelcomeUserAuthor);
         // Avoid sending welcome messages to welcoming user
         if ($user->getName() == $author->getName())
