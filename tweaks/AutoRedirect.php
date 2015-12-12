@@ -98,6 +98,7 @@ class AutoRedirect {
 		 * Takes a Title and returns a new Title to redirect to, or false if
 		 * the current title is acceptable.
 		 */
+		global $wgMaxRedirects, $wgAutoRedirectUsername;
 		if ($title->exists()) {
 			$rev = Revision::newFromTitle($title);
 			$content = $rev->getContent();
@@ -115,7 +116,6 @@ class AutoRedirect {
 		if (!($title instanceof Title)) {
 			$title = Title::newFromText($title);
 		}
-		global $wgMaxRedirects;
 		$limit = max(2, $wgMaxRedirects);
 		$new = self::findDestinationTitle($title, $limit);
 		if ($new->getFullText() == $title->getFullText()) {
