@@ -12,7 +12,7 @@ $wgExtensionCredits['AutoRedirect'][] = array(
     'author' =>'Lethosor',
     'url' => 'https://github.com/lethosor/DFWikiFunctions',
     'description' => 'Automatically redirects pages to more appropriate titles',
-    'version'  => '2.0.1',
+    'version'  => '2.0.2',
 );
 
 // (ns name) => [(ns name), ...]
@@ -51,38 +51,6 @@ class AutoRedirect {
             }
         }
     }
-
-    static function PrefixSearchBackend ($namespaces, $search, $limit, &$results) {
-        // Based on PrefixSearch::defaultSearchBackend
-        global $wgAutoRedirectNamespaces;
-        if ($namespaces[0] == NS_MAIN) {
-            $namespaces = $wgAutoRedirectNamespaces[''];
-        }
-        $srchres = array();
-        foreach ($namespaces as $ns) {
-            if (count($srchres) > $limit)
-                break;
-            $ns = self::toNamespace($ns);
-            $req = new FauxRequest( array(
-                'action' => 'query',
-                'list' => 'allpages',
-                'apnamespace' => $ns,
-                'aplimit' => $limit,
-                'apprefix' => $search
-            ));
-            // Execute
-            $module = new ApiMain($req);
-            $module->execute();
-            $data = $module->getResultData();
-            foreach ((array)$data['query']['allpages'] as $pageinfo) {
-                // Note: this data will not be printable by the xml engine
-                // because it does not support lists of unnamed items
-                $srchres[] = $pageinfo['title'];
-            }
-        }
-        $results = $srchres;
-        return false;
-    }
 }
 
 $wgHooks['InitializeArticleMaybeRedirect'][] = function($title, $request, &$ignoreRedirect, &$target, &$article) {
@@ -105,5 +73,3 @@ $wgHooks['BeforeParserFetchTemplateAndtitle'][] = function($parser, $title, &$sk
     }
     return true;
 };
-
-$wgHooks['PrefixSearchBackend'][] = 'AutoRedirect::PrefixSearchBackend';
