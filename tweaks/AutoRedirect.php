@@ -12,10 +12,10 @@ $wgExtensionCredits['AutoRedirect'][] = array(
     'author' =>'Lethosor',
     'url' => 'https://github.com/lethosor/DFWikiFunctions',
     'description' => 'Automatically redirects pages to more appropriate titles',
-    'version'  => '2.0',
+    'version'  => '2.0.1',
 );
 
-// Note: now just a (ns name) => (ns name) map
+// (ns name) => [(ns name), ...]
 $wgAutoRedirectNamespaces = array();
 
 class AutoRedirect {
@@ -25,8 +25,13 @@ class AutoRedirect {
         if (self::$NsConfig == null) {
             global $wgAutoRedirectNamespaces;
             $config = array();
-            foreach ($wgAutoRedirectNamespaces as $ns => $target) {
-                $config[self::toNamespace($ns)] = self::toNamespace($target);
+            foreach ($wgAutoRedirectNamespaces as $ns => $list) {
+                if (!is_array($list)) $list = array($list);
+                $ns = self::toNamespace($ns);
+                foreach ($list as $k => $v) {
+                    $list[$k] = self::toNamespace($v);
+                }
+                $config[$ns] = $list;
             }
             self::$NsConfig = $config;
         }
@@ -42,7 +47,7 @@ class AutoRedirect {
         if (array_key_exists($title->getNamespace(), $config) && $title->exists()) {
             $content = Revision::newFromTitle($title)->getContent();
             if (strpos($content->getNativeData(), "#SUPERAUTOREDIRECT") === 0) {
-                return Title::makeTitleSafe($config[$title->getNamespace()], $title->getBaseText());
+                return Title::makeTitleSafe($config[$title->getNamespace()][0], $title->getBaseText());
             }
         }
     }
