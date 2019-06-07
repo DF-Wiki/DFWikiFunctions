@@ -12,11 +12,12 @@ $wgExtensionCredits['AutoRedirect'][] = array(
     'author' =>'Lethosor',
     'url' => 'https://github.com/lethosor/DFWikiFunctions',
     'description' => 'Automatically redirects pages to more appropriate titles',
-    'version'  => '1.0.6',
+    'version'  => '1.1.0',
 );
 
 $wgAutoRedirectNamespaces = array();
 $wgAutoRedirectChecks = array();
+$wgAutoRedirectUsername = 'AutoRedirectBot';
 
 class AutoRedirect {
     private static $NsConfig = null;
@@ -39,10 +40,8 @@ class AutoRedirect {
         }
         return self::$NsConfig;
     }
-    static function toNamespace ($ns) {
-        if (is_int($ns))
-            return $ns;
-        return Title::newFromText("$ns:Dummy")->getNamespace();
+    static function toNamespace ($text) {
+        return Title::newFromText("$text:Dummy")->getNamespace();
     }
     static function findNextTitle ($title, $config, $configNs=null) {
         /**
@@ -57,7 +56,7 @@ class AutoRedirect {
         array_unshift($wgAutoRedirectChecks, 'AutoRedirect::toString');
         // Namespace ID and text of original title
         $titleNs = $title->getNamespace();
-        $titleText = $title->getText();
+        $titleText = $title->getBaseText();
         if ($configNs === null) {
             $configNs = $titleNs;
         }
@@ -68,9 +67,10 @@ class AutoRedirect {
                     $new = Title::makeTitleSafe($ns, $newText);
                     if (!$new) continue;
                     if ($new->isRedirect()) {
-                        $content = WikiPage::factory($new)->getText();
-                        $new = Title::newFromRedirect($content);
-                        if ($new) return $new;
+                                    $content = ContentHandler::getContentText(WikiPage::factory($new)->getRevision()->getContent(Revision::RAW));
+                        $content = ContentHandler::makeContent($content, null, CONTENT_MODEL_WIKITEXT);
+                                    $new = $content->getRedirectTarget();
+                    if ($new) return $new;
                         else return false;
                     }
                     if ($new->exists()) {
@@ -94,31 +94,47 @@ class AutoRedirect {
         }
         return $title;
     }
-    static function redirect ($title) {
+    static function redirect ($title, $createLink = true) {
         /**
          * Takes a Title and returns a new Title to redirect to, or false if
          * the current title is acceptable.
          */
-        if ($title->exists()) return false;
+        global $wgMaxRedirects, $wgAutoRedirectUsername;
+        if ($title->exists()) {
+            $rev = Revision::newFromTitle($title);
+            $content = $rev->getContent();
+
+            if ($content->getNativeData() !== "#SUPERAUTOREDIRECT") {
+                return false;
+            }
+        }
+
         if ($title->getFragment() && !($title->getText())) {
             // skip [[#Section]] links
             return false;
         }
+
         if (!($title instanceof Title)) {
             $title = Title::newFromText($title);
         }
-        global $wgMaxRedirects;
         $limit = max(2, $wgMaxRedirects);
         $new = self::findDestinationTitle($title, $limit);
-        if ($new->getFullText() == $title->getFullText()) return false;
-        else return $new;
+        if ($new->getFullText() == $title->getFullText()) {
+            return false;
+        } else {
+            if ($createLink && !$title->exists()) {
+                $page = WikiPage::factory($title);
+                $content = ContentHandler::makeContent( "#SUPERAUTOREDIRECT", $title );
+                $page->doEditContent($content, "", EDIT_FORCE_BOT, false, User::newFromName($wgAutoRedirectUsername));
+            }
+            return $new;
+        }
     }
     static function PrefixSearchBackend ($namespaces, $search, $limit, &$results) {
         // Based on PrefixSearch::defaultSearchBackend
         global $wgAutoRedirectNamespaces;
         if ($namespaces[0] == NS_MAIN) {
             $namespaces = $wgAutoRedirectNamespaces[''];
-            array_unshift($namespaces, NS_MAIN);
         }
         $srchres = array();
         foreach ($namespaces as $ns) {
@@ -147,9 +163,11 @@ class AutoRedirect {
     }
 }
 
-$wgHooks['InitializeArticleMaybeRedirect'][] = function($title, $request, &$ignoreRedirect, &$target) {
+$wgHooks['InitializeArticleMaybeRedirect'][] = function($title, $request, &$ignoreRedirect, &$target, &$article) {
     // Handles redirects
+
     $new = AutoRedirect::redirect($title);
+
     if ($new) {
         $target = $new;
         $ignoreRedirect = false;
@@ -166,11 +184,16 @@ $wgHooks['BeforeParserFetchTemplateAndtitle'][] = function($parser, $title, &$sk
 };
 $wgHooks['TitleIsAlwaysKnown'][] = function($title, &$result) {
     // Handles links (prevents them from appearing as redlinks when they actually work)
-    $new = AutoRedirect::redirect($title);
+    $new = AutoRedirect::redirect($title, false);
     if ($new) {
         $result = true;
     }
     return true;
+};
+
+$wgHooks['UserGetReservedNames'][] = function(&$usernames) {
+    global $wgAutoRedirectUsername;
+    $usernames[] = $wgAutoRedirectUsername;
 };
 
 $wgHooks['PrefixSearchBackend'][] = 'AutoRedirect::PrefixSearchBackend';
