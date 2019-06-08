@@ -12,7 +12,7 @@ $wgExtensionCredits['AutoRedirect'][] = array(
     'author' =>'Lethosor',
     'url' => 'https://github.com/lethosor/DFWikiFunctions',
     'description' => 'Automatically redirects pages to more appropriate titles',
-    'version'  => '2.0.2',
+    'version'  => '2.0.3',
 );
 
 // (ns name) => [(ns name), ...]
@@ -70,6 +70,14 @@ $wgHooks['BeforeParserFetchTemplateAndtitle'][] = function($parser, $title, &$sk
     $new = AutoRedirect::redirect($title);
     if ($new) {
         $id = $new->getLatestRevID();
+    }
+    return true;
+};
+
+$wgHooks['InternalParseBeforeLinks'][] = function($parser, &$text) {
+    $new = AutoRedirect::redirect($parser->mTitle);
+    if ($new) {
+        $text = str_replace("#SUPERAUTOREDIRECT", "#SUPERAUTOREDIRECT [[{$new->getFullText()}]]", $text);
     }
     return true;
 };
