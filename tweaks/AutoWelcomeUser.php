@@ -14,27 +14,27 @@ $wgExtensionCredits['AutoWelcomeUser'][] = array(
     'author' =>'Lethosor',
     'url' => 'https://github.com/lethosor/DFWikiFunctions',
     'description' => 'Posts a message to new users\' talk pages',
-    'version'  => '0.2',
+    'version'  => '0.2.1',
 );
 
 class AutoWelcomeUserHooks {
     public static function PageContentSaveComplete ($article, $user /* , ... */) {
         global $wgAutoWelcomeUserText, $wgAutoWelcomeUserAuthor, $wgAutoWelcomeUserEditCount;
+        if ($user->isAnon())
+            return true;
         if ($user->getEditCount() != $wgAutoWelcomeUserEditCount - 1) {
             // Edit count is not increased until after this hook runs
             return true;
         }
         $page = WikiPage::factory($user->getTalkPage());
+        if ($page->exists())
+            return true;
         $author = User::newFromName($wgAutoWelcomeUserAuthor);
         // Avoid sending welcome messages to welcoming user
         if ($user->getName() == $author->getName())
             return true;
-        $page->doEdit(
-            $wgAutoWelcomeUserText,
-            "Welcoming user " . $user->getName(),
-            0, false,  // flags, baseRevId
-            $author
-        );
+        $content = ContentHandler::makeContent($wgAutoWelcomeUserText, $page->getTitle());
+        $page->doEditContent($content, "Welcoming user " . $user->getName(), 0, false, $author);
         return true;
     }
 }
