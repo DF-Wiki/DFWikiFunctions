@@ -10,9 +10,9 @@ $wgExtensionCredits['AutoRedirect'][] = array(
     'path' => __FILE__,
     'name' => 'AutoRedirect',
     'author' =>'Lethosor',
-    'url' => 'https://github.com/lethosor/DFWikiFunctions',
-    'description' => 'Automatically redirects pages to more appropriate titles',
-    'version'  => '2.0.3',
+    'url' => 'https://github.com/DF-Wiki/DFWikiFunctions',
+    'description' => 'Automatically fixes issues with double redirects',
+    'version'  => '3.0-alpha',
 );
 
 // (ns name) => [(ns name), ...]
