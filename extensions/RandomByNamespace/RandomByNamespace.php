@@ -6,7 +6,7 @@ $wgExtensionCredits['specialpage'][] = array(
     'author' => 'Lethosor',
     'url' => 'https://github.com/lethosor/DFWikiFunctions',
     'descriptionmsg' => 'randombynamespace-desc',
-    'version' => '0.4',
+    'version' => '0.4.1',
 );
 
 $wgExtensionMessagesFiles['RandomByNamespace'] = __DIR__ . '/RandomByNamespace.i18n.php';
@@ -19,5 +19,5 @@ $wgResourceModules['ext.RandomByNamespace'] = array(
         'js/randombynamespace.js'
     ),
     'localBasePath' => __DIR__,
-    //'remoteExtPath' => 'DFWikiFunctions/extensions/RandomByNamespace',
+    'remoteExtPath' => 'DFWikiFunctions/extensions/RandomByNamespace',
 );
