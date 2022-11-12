@@ -18,7 +18,7 @@ class SpecialRandomByNamespace extends SpecialPage {
             if ($ns == '')
                 $ns = 'Main';
             $ns = str_replace('_', ' ', $ns);
-            $output->addWikiText("*[[Special:Random/$ns|$ns]] <span data-id='$id'></span>\n");
+            $output->addWikiTextAsContent("*[[Special:Random/$ns|$ns]] <span data-id='$id'></span>\n");
         }
         $output->addHTML('</div>');
     }
